@@ -110,7 +110,7 @@ const analyzeFile = async () => {
         </button>
         {loading && (
           <p className="mt-4 text-blue-600 font-medium">
-            Please wait, your file is getting analyzed...
+            Please wait, your file is getting analyzed....
           </p>
         )}
 

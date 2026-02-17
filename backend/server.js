@@ -1,20 +1,57 @@
+require("dotenv").config();
+
 const express = require("express");
 const axios = require("axios");
 const cors = require("cors");
 const multer = require("multer");
 const pdf = require("pdf-parse/lib/pdf-parse.js");
-
-
 const Tesseract = require("tesseract.js");
 const fs = require("fs");
 
-
 const app = express();
+const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
 const upload = multer({ dest: "uploads/" });
 
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
+
+if (!GROQ_API_KEY) {
+  console.error("Missing GROQ_API_KEY in environment variables");
+  process.exit(1);
+}
+
+async function callGroq(content) {
+  const response = await axios.post(
+    "https://api.groq.com/openai/v1/chat/completions",
+    {
+      model: "llama-3.1-8b-instant",
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are a social media growth analyst. Provide a short summary, a score out of 10, engagement improvements, and relevant hashtags."
+        },
+        {
+          role: "user",
+          content: content
+        }
+      ],
+      temperature: 0.2
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${GROQ_API_KEY}`,
+        "Content-Type": "application/json"
+      }
+    }
+  );
+
+  return response.data.choices[0].message.content;
+}
+
+/* ===================== TEXT ANALYSIS ===================== */
 
 app.post("/analyze", async (req, res) => {
   try {
@@ -24,49 +61,21 @@ app.post("/analyze", async (req, res) => {
       return res.status(400).json({ error: "No text provided" });
     }
 
-    const response = await axios.post(
-      "http://localhost:11434/api/generate",
-      {
-        model: "tinyllama",
-        prompt: `
-        You are a social media growth analyst.
+    const result = await callGroq(text);
 
-        Analyze this post and suggest:
-        - A short summary
-        - A score out of 10
-        - Engagement improvements
-        - Relevant hashtags
+    console.log("LLM RAW RESPONSE:\n", result);
 
-        Post:
-        "${text}"
-        `,
-        stream: false,
-        options: {
-          temperature: 0.2
-        }
-      }
-    );
+    return res.json({ result });
 
-    const rawResponse = response.data.response;
-
-    console.log("LLM RAW RESPONSE:\n", rawResponse);
-
-    // Just return raw text
-    res.json({ result: rawResponse });
-
-  }
-   catch (error) {
-    console.error("Backend error:", error.message);
-    res.status(500).json({ error: "AI analysis failed" });
+  } catch (error) {
+    console.error("Backend error:", error.response?.data || error.message);
+    return res.status(500).json({ error: "AI analysis failed" });
   }
 });
 
-
+/* ===================== FILE ANALYSIS ===================== */
 
 app.post("/analyze-file", upload.single("file"), async (req, res) => {
-   console.log("File route hit");
-   console.log("File object:", req.file);
-
   try {
     if (!req.file) {
       return res.status(400).json({ error: "No file uploaded" });
@@ -74,20 +83,16 @@ app.post("/analyze-file", upload.single("file"), async (req, res) => {
 
     const filePath = req.file.path;
     const mimeType = req.file.mimetype;
-
     let extractedText = "";
 
-    // PDF Handling
+    // PDF
     if (mimeType === "application/pdf") {
       const dataBuffer = fs.readFileSync(filePath);
       const pdfData = await pdf(dataBuffer);
-
       extractedText = pdfData.text;
     }
-  
 
-
-    // Image OCR Handling
+    // Image OCR
     else if (mimeType.startsWith("image/")) {
       const result = await Tesseract.recognize(filePath, "eng");
       extractedText = result.data.text;
@@ -98,45 +103,23 @@ app.post("/analyze-file", upload.single("file"), async (req, res) => {
       return res.status(400).json({ error: "Unsupported file type" });
     }
 
-    // Clean up uploaded file
+    // Delete file after processing
     fs.unlinkSync(filePath);
 
-    // Send extracted text to Ollama
-    const response = await axios.post(
-      "http://localhost:11434/api/generate",
-      {
-        model: "tinyllama",
-        prompt: `
-        You are a social media growth analyst.
-
-        Analyze this content and suggest:
-        - A short summary
-        - A score out of 10
-        - Engagement improvements
-        - Relevant hashtags
-
-        Content:
-        "${extractedText}"
-        `,
-        stream: false,
-        options: { temperature: 0.2 }
-      }
-    );
+    const result = await callGroq(extractedText);
 
     return res.json({
       extractedText,
-      result: response.data.response
+      result
     });
 
   } catch (error) {
-    console.error("File analyze error:", error.message);
+    console.error("File analyze error:", error.response?.data || error.message);
     return res.status(500).json({ error: "File analysis failed" });
   }
 });
 
-
-
-
-app.listen(5000, () => {
-  console.log("Backend running on port 5000");
+app.listen(PORT, () => {
+  console.log(`Backend running on port ${PORT}`);
 });
+
