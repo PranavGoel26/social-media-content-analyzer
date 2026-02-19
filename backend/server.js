@@ -11,7 +11,16 @@ const fs = require("fs");
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+// app.use(cors());
+app.use(cors({
+  origin: [
+    "http://localhost:5173",
+    "https://social-media-content-analyzer-mt2uezn12.vercel.app"
+  ],
+  methods: ["GET", "POST"],
+  credentials: true
+}));
+
 app.use(express.json());
 const upload = multer({ dest: "uploads/" });
 
@@ -122,4 +131,10 @@ app.post("/analyze-file", upload.single("file"), async (req, res) => {
 app.listen(PORT, () => {
   console.log(`Backend running on port ${PORT}`);
 });
+
+
+app.get("/", (req, res) => {
+  res.send("Backend is running 🚀");
+});
+
 
