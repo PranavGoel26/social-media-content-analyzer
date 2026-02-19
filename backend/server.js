@@ -15,7 +15,7 @@ const PORT = process.env.PORT || 5000;
 app.use(cors({
   origin: [
     "http://localhost:5173",
-    "https://social-media-content-analyzer-mt2uezn12.vercel.app"
+    "https://social-media-content-analyzer-pi.vercel.app"
   ],
   methods: ["GET", "POST"],
   credentials: true
