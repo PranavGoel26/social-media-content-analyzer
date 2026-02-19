@@ -1,193 +1,202 @@
-# Social Media Content Analyzer
+# 🚀 Social Media Content Analyzer
 
-## Project Overview
+A full-stack web application that analyzes social media posts and uploaded documents to generate structured engagement feedback, performance scoring, improvement suggestions, and relevant hashtags.
 
-Social Media Content Analyzer is a full-stack web application that analyzes social media posts and suggests engagement improvements using a locally running Large Language Model (LLM) via Ollama.  
-
-The application allows users to:
-- Paste text content for analysis
-- Upload PDF documents
-- Upload image files (with OCR support)
-- Extract text from documents
-- Receive AI-generated engagement suggestions
-
-The system performs PDF parsing, OCR-based text extraction for images, and sends the extracted content to a backend API. The backend communicates with a local LLM instance (TinyLlama via Ollama) to generate structured engagement feedback.
-
-The project was built with production-quality structure, basic error handling, loading states, and clean UI components. It is designed to be lightweight, modular, and easily deployable.
+The application supports direct text input as well as PDF and image uploads (with OCR support). Extracted content is processed through an AI analysis layer and returned in a clean, readable format.
 
 ---
 
-## Architecture Overview
+## Live Demo
 
-The application follows a clean client-server architecture:
+**Frontend (Vercel):**  
+https://social-media-content-analyzer-r339bpl36.vercel.app/
 
-Frontend (React + Vite + Tailwind)
+**Backend (Render):**  
+https://social-media-content-analyzer-backendd.onrender.com
+
+---
+
+## ✨ Features
+
+- Text-based post analysis  
+- PDF text extraction  
+- Image OCR text extraction  
+- Engagement score (out of 10)  
+- Improvement suggestions  
+- Relevant hashtag recommendations  
+- Loading indicators for better UX  
+- Basic error handling  
+- Clean light-themed responsive UI  
+- Production-ready deployment  
+
+---
+
+## 🏗 Architecture Overview
+
+The application follows a clean client-server architecture.
+
+### Frontend
 - Handles UI rendering
-- Manages file uploads (PDF / Image)
-- Displays loading states
-- Sends extracted text to backend
-- Displays AI response directly
+- Accepts text input
+- Uploads files (PDF / Image)
+- Sends requests to backend API
+- Displays AI-generated response
 
-Backend (Node.js + Express)
-- Handles API endpoints
-- Manages file uploads
-- Extracts text from PDFs (pdf-parse)
-- Extracts text from images (Tesseract OCR)
-- Sends extracted text to Ollama LLM API
-- Returns AI response to frontend
-
-LLM Layer (Ollama - TinyLlama)
-- Runs locally or via Docker
-- Generates engagement suggestions
-
-Data Flow:
-User → Frontend → Backend → Ollama → Backend → Frontend → UI
+### Backend
+- Exposes REST API endpoints
+- Handles file uploads
+- Extracts text from PDFs
+- Performs OCR on image files
+- Sends extracted content to AI analysis service
+- Returns structured response to frontend
 
 ---
 
-## Folder Structure
+## 🔄 Application Flow
 
+```mermaid
+flowchart LR
+    A[User Input / File Upload] --> B[Frontend - React]
+    B --> C[Backend API - Express]
+    C --> D[Text Extraction Layer]
+    D --> E[AI Analysis Layer]
+    E --> C
+    C --> B
+    B --> F[Display AI Response]
+```
+
+### Step-by-Step Flow
+
+1. User enters text or uploads a file  
+2. Frontend sends request to backend  
+3. Backend extracts text (PDF parsing or OCR)  
+4. Extracted content is sent to AI service  
+5. AI generates engagement insights  
+6. Backend returns response  
+7. Frontend displays formatted result  
+
+---
+
+## 📁 Folder Structure
+
+```
 social-media-content-analyzer/
 │
 ├── backend/
-│ ├── uploads/ # Uploaded files storage
-│ ├── server.js # Express server
-│ ├── package.json
+│   ├── uploads/              # Temporary uploaded files
+│   ├── server.js             # Express server entry point
+│   ├── package.json
+│   └── .env                  # Environment variables (not committed)
 │
 ├── frontend/
-│ ├── public/
-│ ├── src/
-│ │ ├── components/
-│ │ │ ├── Navbar.jsx
-│ │ │ ├── Footer.jsx
-│ │ │ ├── Home.jsx
-│ │ │ └── Analyze.jsx
-│ │ ├── App.jsx
-│ │ └── main.jsx
-│ ├── index.html
-│ ├── package.json
+│   ├── public/
+│   ├── src/
+│   │   ├── assets/
+│   │   ├── components/
+│   │   ├── pages/
+│   │   │   ├── Home.jsx
+│   │   │   └── Analyze.jsx
+│   │   ├── App.jsx
+│   │   └── main.jsx
+│   ├── index.html
+│   ├── package.json
+│   └── .env
 │
 └── README.md
-
-
----
-
-## Features
-
-- Text-based post analysis
-- PDF text extraction
-- OCR-based image text extraction
-- Drag-and-drop file upload
-- Loading indicators
-- Error handling
-- Clean light-themed UI
-- Docker-compatible Ollama setup
+```
 
 ---
 
-## Technologies Used
-
-Frontend:
-- React
-- Vite
-- Tailwind CSS
-- Axios
-
-Backend:
-- Node.js
-- Express
-- Multer
-- pdf-parse
-- Tesseract.js
-
-AI:
-- Ollama
-- TinyLlama model
-
-Deployment:
-- Vercel (Frontend)
-- Render (Backend)
-- Docker (Ollama)
-
----
-
-## How to Run Locally
-
-### Backend
-
-
----
-
-## Features
-
-- Text-based post analysis
-- PDF text extraction
-- OCR-based image text extraction
-- Drag-and-drop file upload
-- Loading indicators
-- Error handling
-- Clean light-themed UI
-- Docker-compatible Ollama setup
-
----
-
-## Technologies Used
-
-Frontend:
-- React
-- Vite
-- Tailwind CSS
-- Axios
-
-Backend:
-- Node.js
-- Express
-- Multer
-- pdf-parse
-- Tesseract.js
-
-AI:
-- Ollama
-- TinyLlama model
-
-Deployment:
-- Vercel (Frontend)
-- Render (Backend)
-- Docker (Ollama)
-
----
-
-## How to Run Locally
-
-### Backend
-
-cd backend
-npm install
-node server.js
-
-
+## 🛠 Tech Stack
 
 ### Frontend
+- React  
+- Vite  
+- Tailwind CSS  
+- Axios  
 
+### Backend
+- Node.js  
+- Express  
+- Multer  
+- pdf-parse  
+- Tesseract.js  
 
+### Deployment
+- Vercel (Frontend)  
+- Render (Backend)  
+
+---
+
+## ⚙️ Environment Variables
+
+### Backend (.env)
+
+```
+PORT=5000
+API_KEY={your_api_key_here}
+```
+
+### Frontend (.env)
+
+```
+VITE_API_URL={your_backend_url}
+```
+
+---
+
+## 💻 Run Locally
+
+### 1️⃣ Clone Repository
+
+```bash
+git clone https://github.com/PranavGoel26/social-media-content-analyzer.git
+cd social-media-content-analyzer
+```
+
+---
+
+### 2️⃣ Setup Backend
+
+```bash
+cd backend
+npm install
+npm start
+```
+
+Backend runs at:
+
+```
+http://localhost:5000
+```
+
+---
+
+### 3️⃣ Setup Frontend
+
+```bash
 cd frontend
 npm install
 npm run dev
+```
 
+Frontend runs at:
 
-Ensure Ollama is running:
+```
+http://localhost:5173
+```
 
+##  Evaluation Highlights
+
+- Clean and modular project structure  
+- Proper error handling  
+- Loading states for better UX  
+- File upload with OCR support  
+- Production deployment setup  
+- Clear separation of concerns  
 
 ---
 
-## Deployment
+##  Author
 
-Frontend: Deploy on Vercel  
-Backend: Deploy on Render  
-LLM: Deploy via Docker container with Ollama  
-
----
-
-## Author
-
-PRANAV GOEL
+**PRANAV GOEL**

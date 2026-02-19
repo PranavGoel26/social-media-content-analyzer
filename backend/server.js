@@ -1,4 +1,3 @@
-require("dotenv").config();
 
 const express = require("express");
 const axios = require("axios");
@@ -7,6 +6,7 @@ const multer = require("multer");
 const pdf = require("pdf-parse/lib/pdf-parse.js");
 const Tesseract = require("tesseract.js");
 const fs = require("fs");
+require("dotenv").config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -56,7 +56,7 @@ async function callGroq(content) {
   return response.data.choices[0].message.content;
 }
 
-/* ===================== TEXT ANALYSIS ===================== */
+/*  TEXT ANALYSIS */
 
 app.post("/analyze", async (req, res) => {
   try {
@@ -78,7 +78,7 @@ app.post("/analyze", async (req, res) => {
   }
 });
 
-/* ===================== FILE ANALYSIS ===================== */
+/*  FILE ANALYSIS */
 
 app.post("/analyze-file", upload.single("file"), async (req, res) => {
   try {

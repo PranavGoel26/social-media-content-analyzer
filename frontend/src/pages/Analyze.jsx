@@ -32,31 +32,31 @@ function Analyze() {
   }
 
 
-const analyzeFile = async () => {
-  if (!file) return;
+  const analyzeFile = async () => {
+    if (!file) return;
 
-  setLoading(true);
-  setResult("");
+    setLoading(true);
+    setResult("");
 
-  const formData = new FormData();
-  formData.append("file", file);
+    const formData = new FormData();
+    formData.append("file", file);
 
-  try {
-    const response = await axios.post(
-      import.meta.env.VITE_API_URL + "/analyze-file",
-      formData,
-      { headers: { "Content-Type": "multipart/form-data" } }
-    );
+    try {
+      const response = await axios.post(
+        import.meta.env.VITE_API_URL + "/analyze-file",
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
 
-    setResult(response.data.result || "");
+      setResult(response.data.result || "");
 
-  } catch (error) {
-    console.error(error);
-    setResult("File analysis failed.");
-  }
+    } catch (error) {
+      console.error(error);
+      setResult("File analysis failed.");
+    }
 
-  setLoading(false);
-};
+    setLoading(false);
+  };
 
 
 
@@ -127,7 +127,7 @@ const analyzeFile = async () => {
       </div>
     </div>
 
-    {/* ================= RESULT SECTION ================= */}
+    {/*RESULT SECTION */}
     {result && (
       <div className="mt-8 bg-white p-8 rounded-xl shadow-md border border-slate-200">
         <h3 className="text-xl font-semibold mb-4 text-slate-800">
@@ -140,8 +140,7 @@ const analyzeFile = async () => {
       </div>
     )}
   </div>
-)
+  )
+  }
 
-}
-
-export default Analyze
+  export default Analyze
