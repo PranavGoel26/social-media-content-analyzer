@@ -16,10 +16,10 @@ function Analyze() {
 
     try {
       const response = await axios.post(
-        import.meta.env.VITE_API_URL + "/analyze-file"
-,
+        import.meta.env.VITE_API_URL + "/analyze",
         { text }
       )
+
 
       setResult(response.data.result || "")
 
@@ -43,7 +43,7 @@ const analyzeFile = async () => {
 
   try {
     const response = await axios.post(
-      "http://localhost:5000/analyze-file",
+      import.meta.env.VITE_API_URL + "/analyze-file",
       formData,
       { headers: { "Content-Type": "multipart/form-data" } }
     );
