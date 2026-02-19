@@ -16,8 +16,6 @@ app.use(cors({
   credentials: true
 }));
 
-app.options("*", cors());
-
 
 app.use(express.json());
 const upload = multer({ dest: "uploads/" });
@@ -126,13 +124,15 @@ app.post("/analyze-file", upload.single("file"), async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`Backend running on port ${PORT}`);
-});
-
 
 app.get("/", (req, res) => {
   res.send("Backend is running 🚀");
 });
+
+
+app.listen(PORT, () => {
+  console.log(`Backend running on port ${PORT}`);
+});
+
 
 
