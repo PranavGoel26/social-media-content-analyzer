@@ -9,7 +9,7 @@ The application supports direct text input as well as PDF and image uploads (wit
 ## Live Demo
 
 **Frontend (Vercel):**  
-https://social-media-content-analyzer-r339bpl36.vercel.app/
+[https://social-media-content-analyzer-r339bpl36.vercel.app/](https://social-media-content-analyzer-pi.vercel.app/)
 
 **Backend (Render):**  
 https://social-media-content-analyzer-backendd.onrender.com
