@@ -36,14 +36,15 @@ async function callGroq(content) {
         {
           role: "system",
           content:
-            "You are a social media growth analyst. Provide a short summary, a score out of 10, engagement improvements, and relevant hashtags."
+            "You are a social media growth analyst. You MUST respond with ONLY valid JSON containing the following keys: \"summary\" (string), \"score\" (number out of 10), \"improvements\" (array of strings), and \"hashtags\" (array of strings). Do not include markdown code blocks or any other surrounding text."
         },
         {
           role: "user",
           content: content
         }
       ],
-      temperature: 0.2
+      temperature: 0.2,
+      response_format: { type: "json_object" }
     },
     {
       headers: {
@@ -53,7 +54,21 @@ async function callGroq(content) {
     }
   );
 
-  return response.data.choices[0].message.content;
+  let rawContent = response.data.choices[0].message.content;
+  try {
+    // Attempt to clear markdown backticks if any were generated despite instructions
+    rawContent = rawContent.replace(/```json/g, "").replace(/```/g, "").trim();
+    return JSON.parse(rawContent);
+  } catch (e) {
+    console.error("Failed to parse AI JSON response:", rawContent);
+    // Return a fallback object so frontend structure doesn't break
+    return {
+      summary: rawContent,
+      score: 0,
+      improvements: ["Analysis parsing failed. Try again."],
+      hashtags: []
+    };
+  }
 }
 
 /*  TEXT ANALYSIS */
